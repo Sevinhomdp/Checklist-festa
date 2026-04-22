@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>🔥 Checklist da Festa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       VARIÁVEIS & RESET
+    ============================================================ */
+    :root {
+      --bg:          #1a1410;
+      --surface:     #241d17;
+      --surface2:    #2e2520;
+      --border:      #3d3028;
+      --ember:       #ff6b2b;
+      --ember-glow:  #ff8c55;
+      --green:       #4ade80;
+      --green-dim:   #166534;
+      --text:        #f5ede4;
+      --text-dim:    #9c8878;
+      --red:         #f87171;
+      --radius:      14px;
+      --shadow:      0 4px 24px rgba(0,0,0,.45);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    header {
+      background: linear-gradient(135deg, #2e1a0e 0%, #1a1410 60%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 16px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(6px);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .header-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      line-height: 1;
+      color: var(--ember);
+      text-shadow: 0 0 20px rgba(255,107,43,.4);
+    }
+
+    .header-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    /* Progresso global */
+    .global-progress {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ember), var(--green));
+      border-radius: 99px;
+      transition: width .4s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .progress-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    /* Abas de navegação */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 6px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-dim);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--ember);
+      border-color: var(--ember);
+      color: #fff;
+      box-shadow: 0 0 16px rgba(255,107,43,.35);
+    }
+
+    .tab-badge {
+      background: rgba(0,0,0,.25);
+      border-radius: 99px;
+      padding: 1px 6px;
+      font-size: 0.7rem;
+    }
+
+    /* ============================================================
+       CONTEÚDO PRINCIPAL
+    ============================================================ */
+    main {
+      padding: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Painel de lista */
+    .list-panel { display: none; }
+    .list-panel.active { display: block; }
+
+    /* ============================================================
+       SEÇÕES / CATEGORIAS
+    ============================================================ */
+    .category {
+      margin-bottom: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--surface2);
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+
+    .category-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.05rem;
+      letter-spacing: 1.5px;
+      color: var(--ember-glow);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .cat-progress {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: var(--bg);
+      padding: 3px 8px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+    }
+
+    .cat-progress.done {
+      color: var(--green);
+      border-color: var(--green-dim);
+      background: rgba(74,222,128,.08);
+    }
+
+    .cat-arrow {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      transition: transform .25s;
+    }
+
+    .category.collapsed .cat-arrow { transform: rotate(-90deg); }
+
+    .category-items {
+      padding: 6px 0;
+    }
+
+    .category.collapsed .category-items { display: none; }
+
+    /* ============================================================
+       ITEM
+    ============================================================ */
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(61,48,40,.5);
+      transition: background .15s;
+      cursor: pointer;
+    }
+
+    .item:last-child { border-bottom: none; }
+    .item:active { background: rgba(255,107,43,.06); }
+
+    /* Checkbox customizado */
+    .item-check {
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s cubic-bezier(.34,1.56,.64,1);
+      cursor: pointer;
+    }
+
+    .item.checked .item-check {
+      background: var(--green);
+      border-color: var(--green);
+      transform: scale(1.08);
+    }
+
+    .check-icon {
+      display: none;
+      font-size: 0.85rem;
+      line-height: 1;
+    }
+
+    .item.checked .check-icon { display: block; }
+
+    /* Texto do item */
+    .item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-name {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all .2s;
+      line-height: 1.3;
+    }
+
+    .item-qty {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .item.checked .item-name {
+      color: var(--text-dim);
+      text-decoration: line-through;
+      text-decoration-color: rgba(156,136,120,.5);
+    }
+
+    /* Botão remover */
+    .item-delete {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+
+    .item-delete:active {
+      background: rgba(248,113,113,.15);
+      color: var(--red);
+    }
+
+    /* ============================================================
+       FORMULÁRIO DE ADIÇÃO
+    ============================================================ */
+    .add-form-wrap {
+      position: sticky;
+      bottom: 12px;
+      margin-top: 20px;
+      z-index: 50;
+    }
+
+    .add-form {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: var(--shadow), 0 0 0 1px rgba(255,107,43,.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .add-form-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .add-input {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .add-input:focus { border-color: var(--ember); }
+    .add-input::placeholder { color: var(--text-dim); }
+
+    .add-qty {
+      width: 90px;
+    }
+
+    .cat-select {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      background: var(--ember);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      box-shadow: 0 2px 12px rgba(255,107,43,.35);
+    }
+
+    .add-btn:active { transform: scale(.94); background: #e85e22; }
+
+    /* ============================================================
+       BOTÃO LIMPAR MARCADOS
+    ============================================================ */
+    .actions-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .action-btn {
+      padding: 9px 14px;
+      border-radius: 9px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-dim);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .action-btn:active { opacity: .7; }
+
+    .action-btn.danger:active {
+      background: rgba(248,113,113,.15);
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    /* ============================================================
+       BADGE CRITICO
+    ============================================================ */
+    .critical-section {
+      background: rgba(255,107,43,.06);
+      border: 1.5px solid rgba(255,107,43,.3);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: 0.82rem;
+      color: var(--ember-glow);
+    }
+
+    .critical-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .critical-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 5px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all .2s;
+    }
+
+    .chip.ok {
+      background: rgba(74,222,128,.1);
+      border-color: var(--green-dim);
+      color: var(--green);
+    }
+
+    /* ============================================================
+       EMPTY STATE
+    ============================================================ */
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 0.82rem;
+      opacity: 0;
+      transition: all .3s;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 999;
+      box-shadow: var(--shadow);
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header>
+  <div class="header-top">
+    <div>
+      <div class="header-title">🔥 Checklist da Festa</div>
+      <div class="header-sub">Resenha Bagunçada 2026</div>
+    </div>
+  </div>
+
+  <!-- Barra de progresso global -->
+  <div class="global-progress">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="globalBar" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="globalLabel">0 / 0</div>
+  </div>
+
+  <!-- Abas -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('compras')" id="tab-compras">
+      🛒 Compras <span class="tab-badge" id="badge-compras">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('levar')" id="tab-levar">
+      🎒 Levar <span class="tab-badge" id="badge-levar">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN
+============================================================ -->
+<main>
+
+  <!-- ========== LISTA: COMPRAS ========== -->
+  <div id="panel-compras" class="list-panel active">
+
+    <div class="actions-bar">
+      <button class="action-btn" onclick="toggleAll('compras', true)">✅ Marcar tudo</button>
+      <button class="action-btn" onclick="toggleAll('compras', false)">↩ Desmarcar</button>
+      <button class="action-btn danger" onclick="clearChecked('compras')">🗑 Limpar marcados</button>
+    </div>
+
+    <div id="list-compras"></div>
+
+    <div class="add-form-wrap">
+      <div class="add-form">
+        <div class="add-form-row">
+          <input class="add-input" id="inp-compras-nome" type="text" placeholder="Nome do item…" />
+          <input class="add-input add-qty" id="inp-compras-qty" type="text" placeholder="Qtd." />
+        </div>
+        <div class="add-form-row">
+          <select class="cat-select" id="sel-compras"></select>
+          <button class="add-btn" onclick="addItem('compras')">＋</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LISTA: LEVAR ========== -->
+  <div id="panel-levar" class="list-panel">
+
+    <!-- Checklist crítico -->
+    <div class="critical-section">
+      <div class="critical-title">⚠️ CHEQUE ANTES DE SAIR</div>
+      <div class="critical-chips" id="criticalChips"></div>
+    </div>
+
+    <div class="actions-bar">
+      <button class="action-btn" onclick="toggleAll('levar', true)">✅ Marcar tudo</button>
+      <button class="action-btn" onclick="toggleAll('levar', false)">↩ Desmarcar</button>
+      <button class="action-btn danger" onclick="clearChecked('levar')">🗑 Limpar marcados</button>
+    </div>
+
+    <div id="list-levar"></div>
+
+    <div class="add-form-wrap">
+      <div class="add-form">
+        <div class="add-form-row">
+          <input class="add-input" id="inp-levar-nome" type="text" placeholder="Nome do item…" />
+          <input class="add-input add-qty" id="inp-levar-qty" type="text" placeholder="Obs." />
+        </div>
+        <div class="add-form-row">
+          <select class="cat-select" id="sel-levar"></select>
+          <button class="add-btn" onclick="addItem('levar')">＋</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Toast de feedback -->
+<div id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ============================================================
+   DADOS INICIAIS
+============================================================ */
+
+const INITIAL_DATA = {
+  compras: {
+    categories: [
+      {
+        id: "carnes",
+        title: "🥩 Carnes",
+        items: [
+          { id: "c1", name: "Carne bovina (acém / paleta / contra-filé)", qty: "5 kg", checked: false },
+          { id: "c2", name: "Linguiça",                                    qty: "3 kg",   checked: false },
+          { id: "c3", name: "Frango (coxa / sobrecoxa / asa)",             qty: "2,5 kg", checked: false },
+        ]
+      },
+      {
+        id: "bebidas",
+        title: "🥤 Bebidas",
+        items: [
+          { id: "b1", name: "Refrigerante 2L",           qty: "10 garrafas", checked: false },
+          { id: "b2", name: "Água (galão 5L ou fardo)",  qty: "2 galões",    checked: false },
+        ]
+      },
+      {
+        id: "doces",
+        title: "🍦 Doces / Crianças",
+        items: [
+          { id: "d1", name: "Sorvete (pote 1,5L ou 2L)", qty: "2 potes",    checked: false },
+          { id: "d2", name: "Copinho ou casquinha",       qty: "1 pacote",   checked: false },
+        ]
+      },
+      {
+        id: "churrasco",
+        title: "🔥 Churrasco / Apoio",
+        items: [
+          { id: "ch1", name: "Carvão (saco 4–5 kg)",  qty: "2 sacos", checked: false },
+          { id: "ch2", name: "Gelo",                   qty: "2 sacos", checked: false },
+          { id: "ch3", name: "Sal grosso",             qty: "1 kg",    checked: false },
+        ]
+      },
+      {
+        id: "descartaveis",
+        title: "🍽️ Descartáveis",
+        items: [
+          { id: "dc1", name: "Pratos descartáveis",   qty: "50 unid.",  checked: false },
+          { id: "dc2", name: "Copos descartáveis",    qty: "50 unid.",  checked: false },
+          { id: "dc3", name: "Garfo descartável",     qty: "1 pacote",  checked: false },
+          { id: "dc4", name: "Faca descartável",      qty: "1 pacote",  checked: false },
+          { id: "dc5", name: "Guardanapo",            qty: "2 pacotes", checked: false },
+        ]
+      },
+      {
+        id: "higiene",
+        title: "🧻 Higiene / Limpeza",
+        items: [
+          { id: "h1", name: "Papel higiênico",   qty: "2 pacotes", checked: false },
+          { id: "h2", name: "Sabonete",          qty: "2 unid.",   checked: false },
+          { id: "h3", name: "Detergente",        qty: "1 unid.",   checked: false },
+          { id: "h4", name: "Bucha",             qty: "1 unid.",   checked: false },
+          { id: "h5", name: "Pano de chão",      qty: "2 unid.",   checked: false },
+          { id: "h6", name: "Saco de lixo (G)", qty: "1 pacote",  checked: false },
+        ]
+      },
+      {
+        id: "extras",
+        title: "🧊 Extras",
+        items: [
+          { id: "e1", name: "Papel alumínio",   qty: "1 rolo",  checked: false },
+          { id: "e2", name: "Fósforo / Isqueiro", qty: "1 unid.", checked: false },
+          { id: "e3", name: "Esponja extra",    qty: "1 unid.",  checked: false },
+        ]
+      },
+    ]
+  },
+
+  levar: {
+    categories: [
+      {
+        id: "churrasco_utensilios",
+        title: "🍖 Churrasco — Essencial",
+        items: [
+          { id: "l1", name: "Tábua de churrasco",  qty: "",         checked: false, critical: true },
+          { id: "l2", name: "Faca de churrasco",   qty: "bem afiada ⚠️", checked: false, critical: true },
+          { id: "l3", name: "Garfo de churrasco",  qty: "",         checked: false, critical: true },
+          { id: "l4", name: "Pegador de carne",    qty: "",         checked: false, critical: true },
+        ]
+      },
+      {
+        id: "armazenamento",
+        title: "🧊 Armazenamento / Bebidas",
+        items: [
+          { id: "l5", name: "Cooler (gelo / bebidas)", qty: "", checked: false, critical: true },
+          { id: "l6", name: "Isopor (apoio)",           qty: "", checked: false },
+        ]
+      },
+      {
+        id: "acendimento",
+        title: "🔥 Acendimento",
+        items: [
+          { id: "l7", name: "Isqueiro ou fósforo", qty: "", checked: false, critical: true },
+        ]
+      },
+      {
+        id: "apoio",
+        title: "🍽️ Apoio",
+        items: [
+          { id: "l8", name: "Colher grande (servir)", qty: "",         checked: false },
+          { id: "l9", name: "Tábua extra",            qty: "opcional", checked: false },
+        ]
+      },
+      {
+        id: "extras_levar",
+        title: "⚡ Extras Importantes",
+        items: [
+          { id: "l10", name: "Extensão elétrica", qty: "ESSENCIAL", checked: false },
+        ]
+      },
+    ]
+  }
+};
+
+/* ============================================================
+   ESTADO
+============================================================ */
+const STORAGE_KEY = "festa_checklist_v3";
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved && saved.compras && saved.levar) return saved;
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(INITIAL_DATA)); // deep clone
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+let activeTab = "compras";
+let idCounter = Date.now();
+
+/* ============================================================
+   RENDER
+============================================================ */
+function render() {
+  renderList("compras");
+  renderList("levar");
+  renderCriticalChips();
+  updateProgress();
+}
+
+function renderList(listKey) {
+  const container = document.getElementById("list-" + listKey);
+  const data = state[listKey];
+  container.innerHTML = "";
+
+  data.categories.forEach(cat => {
+    const total   = cat.items.length;
+    const checked = cat.items.filter(i => i.checked).length;
+    const allDone = total > 0 && checked === total;
+    const hasItems = total > 0;
+
+    const catEl = document.createElement("div");
+    catEl.className = "category" + (cat.collapsed ? " collapsed" : "");
+    catEl.dataset.catId = cat.id;
+
+    catEl.innerHTML = `
+      <div class="category-header" onclick="toggleCategory('${listKey}','${cat.id}')">
+        <span class="category-title">${cat.title}</span>
+        <span class="cat-progress ${allDone && hasItems ? 'done' : ''}">${checked}/${total}</span>
+        <span class="cat-arrow">▼</span>
+      </div>
+      <div class="category-items">
+        ${hasItems
+          ? cat.items.map(item => renderItem(listKey, cat.id, item)).join("")
+          : `<div class="empty-state">Nenhum item</div>`
+        }
+      </div>
+    `;
+    container.appendChild(catEl);
+  });
+
+  // Atualiza select de categorias
+  updateCatSelect(listKey);
+}
+
+function renderItem(listKey, catId, item) {
+  return `
+    <div class="item ${item.checked ? 'checked' : ''}"
+         onclick="toggleItem('${listKey}','${catId}','${item.id}')"
+         data-id="${item.id}">
+      <div class="item-check" role="checkbox" aria-checked="${item.checked}">
+        <span class="check-icon">✓</span>
+      </div>
+      <div class="item-body">
+        <div class="item-name">${escHtml(item.name)}</div>
+        ${item.qty ? `<div class="item-qty">${escHtml(item.qty)}</div>` : ""}
+      </div>
+      <button class="item-delete"
+              onclick="event.stopPropagation(); deleteItem('${listKey}','${catId}','${item.id}')"
+              title="Remover item">✕</button>
+    </div>
+  `;
+}
+
+function renderCriticalChips() {
+  const chips = document.getElementById("criticalChips");
+  const criticalItems = [];
+  state.levar.categories.forEach(cat => {
+    cat.items.forEach(item => {
+      if (item.critical) criticalItems.push(item);
+    });
+  });
+
+  chips.innerHTML = criticalItems.map(item => `
+    <div class="chip ${item.checked ? 'ok' : ''}">${item.checked ? "✓" : "○"} ${escHtml(item.name)}</div>
+  `).join("");
+}
+
+function updateCatSelect(listKey) {
+  const sel = document.getElementById("sel-" + listKey);
+  const current = sel.value;
+  sel.innerHTML = state[listKey].categories
+    .map(c => `<option value="${c.id}">${c.title}</option>`)
+    .join("");
+  // Tenta restaurar seleção anterior
+  if (current) sel.value = current;
+}
+
+/* ============================================================
+   PROGRESSO
+============================================================ */
+function updateProgress() {
+  let total = 0, checked = 0;
+  ["compras","levar"].forEach(key => {
+    state[key].categories.forEach(cat => {
+      cat.items.forEach(item => {
+        total++;
+        if (item.checked) checked++;
+      });
+    });
+  });
+
+  const pct = total ? Math.round(checked / total * 100) : 0;
+  document.getElementById("globalBar").style.width = pct + "%";
+  document.getElementById("globalLabel").textContent = checked + " / " + total;
+
+  // Badges por aba
+  ["compras","levar"].forEach(key => {
+    let t = 0, c = 0;
+    state[key].categories.forEach(cat => {
+      cat.items.forEach(item => { t++; if(item.checked) c++; });
+    });
+    document.getElementById("badge-" + key).textContent = c + "/" + t;
+  });
+}
+
+/* ============================================================
+   AÇÕES
+============================================================ */
+function toggleItem(listKey, catId, itemId) {
+  const cat  = state[listKey].categories.find(c => c.id === catId);
+  const item = cat.items.find(i => i.id === itemId);
+  item.checked = !item.checked;
+  saveState();
+  render();
+}
+
+function toggleCategory(listKey, catId) {
+  const cat = state[listKey].categories.find(c => c.id === catId);
+  cat.collapsed = !cat.collapsed;
+  saveState();
+  render();
+}
+
+function deleteItem(listKey, catId, itemId) {
+  const cat = state[listKey].categories.find(c => c.id === catId);
+  cat.items = cat.items.filter(i => i.id !== itemId);
+  saveState();
+  render();
+  toast("Item removido");
+}
+
+function addItem(listKey) {
+  const nomeEl = document.getElementById("inp-" + listKey + "-nome");
+  const qtyEl  = document.getElementById("inp-" + listKey + "-qty");
+  const catEl  = document.getElementById("sel-" + listKey);
+
+  const name = nomeEl.value.trim();
+  if (!name) { nomeEl.focus(); toast("Digite o nome do item!"); return; }
+
+  const cat = state[listKey].categories.find(c => c.id === catEl.value);
+  if (!cat) { toast("Selecione uma categoria"); return; }
+
+  cat.items.push({
+    id:      "u" + (++idCounter),
+    name:    name,
+    qty:     qtyEl.value.trim(),
+    checked: false
+  });
+
+  nomeEl.value = "";
+  qtyEl.value  = "";
+  nomeEl.focus();
+  saveState();
+  render();
+  toast("✓ " + name + " adicionado!");
+}
+
+function toggleAll(listKey, value) {
+  state[listKey].categories.forEach(cat => {
+    cat.items.forEach(item => item.checked = value);
+  });
+  saveState();
+  render();
+  toast(value ? "Tudo marcado ✅" : "Tudo desmarcado ↩");
+}
+
+function clearChecked(listKey) {
+  let removed = 0;
+  state[listKey].categories.forEach(cat => {
+    const before = cat.items.length;
+    cat.items = cat.items.filter(i => !i.checked);
+    removed += before - cat.items.length;
+  });
+  saveState();
+  render();
+  toast(removed > 0 ? removed + " item(s) removido(s)" : "Nenhum marcado");
+}
+
+/* ============================================================
+   NAVEGAÇÃO POR ABAS
+============================================================ */
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll(".list-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-" + tab).classList.add("active");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + tab).classList.add("active");
+}
+
+/* ============================================================
+   UTILITÁRIOS
+============================================================ */
+function escHtml(s) {
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+// Enter no campo de nome adiciona item
+["compras","levar"].forEach(key => {
+  document.addEventListener("DOMContentLoaded", () => {});
+  // Usa delegação: aguarda DOM pronto
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  ["compras","levar"].forEach(key => {
+    document.getElementById("inp-" + key + "-nome")
+      .addEventListener("keydown", e => { if(e.key === "Enter") addItem(key); });
+    document.getElementById("inp-" + key + "-qty")
+      .addEventListener("keydown", e => { if(e.key === "Enter") addItem(key); });
+  });
+  render();
+});
+</script>
+</body>
+</html>
